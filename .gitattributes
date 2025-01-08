@@ -1,2 +1,113 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# ========================================================
+# Sentiment Analysis Tool
+# Created by: Apurba
+# ========================================================
+
+from textblob import TextBlob
+import re
+
+class SentimentAnalyzer:
+    def __init__(self):
+        """Initialize the sentiment analyzer."""
+        pass
+    
+    def clean_text(self, text):
+        """
+        Clean the input text by removing special characters and extra whitespace.
+        
+        Args:
+            text (str): Input text to clean
+            
+        Returns:
+            str: Cleaned text
+        """
+        
+        text = re.sub(r'[^a-zA-Z\s]', '', text)
+        text = ' '.join(text.split())
+        return text.lower()
+    
+    def analyze_sentiment(self, text):
+        """
+        Analyze the sentiment of the given text.
+        
+        Args:
+            text (str): Input text to analyze
+            
+        Returns:
+            dict: Dictionary containing sentiment analysis results
+        """
+        
+        cleaned_text = self.clean_text(text)
+        blob = TextBlob(cleaned_text)
+        
+        polarity = blob.sentiment.polarity
+        subjectivity = blob.sentiment.subjectivity
+        
+        if polarity > 0:
+            sentiment = 'positive'
+        elif polarity < 0:
+            sentiment = 'negative'
+        else:
+            sentiment = 'neutral'
+            
+        return {
+            'text': text,
+            'sentiment': sentiment,
+            'polarity': polarity,
+            'subjectivity': subjectivity
+        }
+
+def main():
+    analyzer = SentimentAnalyzer()
+    
+    while True:
+        print("\n=== Sentiment Analysis Tool ===")
+        print("1. Analyze a single text")
+        print("2. Analyze multiple texts")
+        print("3. Exit")
+        
+        choice = input("\nEnter your choice (1-3): ")
+        
+        if choice == '1':
+            text = input("\nEnter the text to analyze: ")
+            result = analyzer.analyze_sentiment(text)
+            
+            print("\nAnalysis Results:")
+            print("-" * 50)
+            print(f"Text: {result['text']}")
+            print(f"Sentiment: {result['sentiment'].upper()}")
+            print(f"Polarity Score: {result['polarity']:.2f}")
+            print(f"Subjectivity Score: {result['subjectivity']:.2f}")
+            
+        elif choice == '2':
+            texts = []
+            num_texts = int(input("\nHow many texts do you want to analyze? "))
+            
+            for i in range(num_texts):
+                text = input(f"\nEnter text #{i+1}: ")
+                texts.append(text)
+            
+            print("\nAnalysis Results:")
+            print("-" * 50)
+            for text in texts:
+                result = analyzer.analyze_sentiment(text)
+                print(f"\nText: {result['text']}")
+                print(f"Sentiment: {result['sentiment'].upper()}")
+                print(f"Polarity Score: {result['polarity']:.2f}")
+                print(f"Subjectivity Score: {result['subjectivity']:.2f}")
+                print("-" * 50)
+                
+        elif choice == '3':
+            print("\nThank you for using the Sentiment Analysis Tool! - Apurba")
+            break
+            
+        else:
+            print("\nInvalid choice! Please enter 1, 2, or 3.")
+        
+        continue_choice = input("\nPress Enter to continue or 'q' to quit: ")
+        if continue_choice.lower() == 'q':
+            print("\nThank you for using the Sentiment Analysis Tool! - Apurba")
+            break
+
+if __name__ == "__main__":
+    main()
